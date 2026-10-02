@@ -1,6 +1,7 @@
 ###Etiquetamiento 
 ###################En el siguiente código
 ####Se crea una columna "Tipo" que contiene la clase de archivo
+library(stringi)
 df = data.frame(arch = unlist(Archivo))
 df$Tipo = 0  
 df$Tipo[grepl(
