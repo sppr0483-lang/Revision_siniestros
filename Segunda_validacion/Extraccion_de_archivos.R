@@ -54,3 +54,5 @@ df <- tibble(
 ####################Resultado Sin.xlsx
 ####Exportación de resultados
 #write.xlsx(df,"C:/Users/agarciadeleon/R_Studio/Scripts/Carp1/Validacion_PREG_80/Validaciones/Revision_Siniestros/Sin.xlsx")
+df = df[grepl("\\.pdf$", df$arch),]
+head(df)
