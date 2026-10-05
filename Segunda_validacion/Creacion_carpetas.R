@@ -12,5 +12,20 @@ for(i in seq_along(AS)) {
     AS[i]
   )
   dir_create(destino, recurse = TRUE)
+#####Esta carpeta general E es la que permitirá la extracción
+sel <- which(df$Tipo == AS[i])
+  #sel <- Cruce$IDENTIFICADOR[which(Cruce$Auxiliar == AS[i])]
+  cat("\nAuxiliar:", AS[i],
+      "\nArchivos:", length(sel),
+      "\nExiste directorio:", dir_exists(destino), "\n")
+################Una vez revisada la estructura se mueven los archivos
+  tryCatch(
+    file_move(
+      archivos[sel],
+      path(destino, path_file(archivos[sel]))
+    ),
+    error = function(e) {
+      cat("ERROR:", e$message, "\n")
+    }
+  )
 }
-#####Esta carpeta general E es la que permitirá 
