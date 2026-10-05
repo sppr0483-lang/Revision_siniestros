@@ -55,6 +55,54 @@ sort(setdiff(BASE_HIST$llave1,Concentrado$llave1))
 sort(setdiff(Concentrado$llave1,BASE_HIST$llave1))
 unique(Monto$llave1)
 ###################################################
+###################################################
+empresas <- c(
+  "INGENIEROS CUEVAS ASOCIADOS, S.C",
+  "PIMOSA S.A. DE C.V",
+  "CAD & LAN MEXICO, S.A. DE C.V",
+  "VOLTS LEASING",
+  "CRAZY RECORDS AND PRODUCTIONS",
+  "Global Process Agente de Seguros y de Fianzas, S.A. de C.V",
+  "CENTRO ESCOLAR LANDAU, S.C",
+  "MAQUINARIA CAMES S.A. DE C.V",
+  "A TRABAJAR SOLUCIONES DE EMPLEO",
+  "CIVIL GPA, S.A.P.I. DE C.V",
+  "CSI LEASING MEXICO SA DE CV",
+  "JESUS GUILLERMO ALVAREZ ROJO",
+  "FINAMOL S DE RL DE CV",
+  "PRGX DE MÉXICO S DE RL DE CV",
+  "RENDAUTO, S.A. DE C.V",
+  "RODRIGO DOMINGUEZ URQUIZO",
+  "COMERCIALIZADORA DE TODO GARLLIN",
+  "MOMENTUM MARKETING, S.A.S. DE C.V",
+  "PHI TOOLS S.A. DE C.V",
+  "EMERGING METHANE SOLUTIONS S.A. DE C.V",
+  "CONCEPTO LIBRE MEXICANO S DE RL DE C.V",
+  "FUNDACION PRO EMPLEO PRODUCTIVO",
+  "LUIS CARLOS PINTO VELAZQUEZ",
+  "CARLOS ANDRES ARROYO AGUILAR",
+  "CHUFANI CONSTRUCTORA, S.A. DE C.V",
+  "397 CAP, S.A. DE C.V. SOFOM ENR",
+  "ELIZABETH ACOSTA JURADO",
+  "Impulsora del Deportivo Necaxa, S.A. de C.V",
+  "WORLD WILDLIFE FIND INC",
+  "XS PRODUCTIONS, SRL DE CV"
+)
+library(stringi)
+
+normalizar <- function(x) {
+  x %>%
+    tolower() %>%
+    stri_trans_general("Latin-ASCII") %>%  # quita acentos
+    gsub("[^a-z0-9]", "", .)               # deja solo letras y números
+}
+
+empresas = normalizar(empresas)
+BASE_HIST$llave2 = sapply(BASE_HIST$Contratante, normalizar) 
+ZA = BASE_HIST%>%filter(BASE_HIST$llave2 %in% empresas)
+ZA1  =unique(ZA$llave1)
+###################################################
+##################################################
 #####Cruce Monto pagado Convenio Finiquito Base histórica
 library(openxlsx)
 Z1 = Concentrado%>%left_join(Monto, by = c("llave1"="llave1"))
