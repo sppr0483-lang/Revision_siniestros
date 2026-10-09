@@ -1,0 +1,85 @@
+###################################################################
+###########COLOCAR EL RAMO
+#########
+#VARIABLE GLOBAL
+x = "18"
+##############
+library(dplyr)
+library(readxl)
+library(lubridate)
+###Primero usado
+setwd("C:/Users/agarciadeleon/R_Studio/Scripts/Carp1/Validacion_PREG_80/Nueva carpeta")
+getwd()
+#######################################333Importación de datos
+Soporte_T = read_excel("Soporte_A.xlsx")
+Vigor = read_excel("C:/Users/agarciadeleon/R_Studio/Scripts/Carp1/Validacion_PREG_80/Validaciones/Nueva_validacion_08_09_2026/INSUMO_GENERAL_DEF.xlsx", 
+                   col_types = c("numeric", "text", "text", 
+                                 "numeric", "text", "text", "numeric", 
+                                 "text", "date", "date", "date", "date", 
+                                 "date", "date", "numeric", 
+                                 "numeric", "numeric", "numeric", 
+                                 "numeric", "text", "numeric", "text", 
+                                 "numeric", "numeric", "numeric", 
+                                 "numeric", "numeric", "numeric", 
+                                 "numeric", "numeric", "numeric", 
+                                 "numeric", "numeric", "numeric", 
+                                 "numeric", "numeric"))
+
+##################################################################Suma asegurada
+#################Ramos Técnicos
+Soporte_T$`Suma asegurada` = as.numeric(Soporte_T$`Suma asegurada` )
+Vigor$`ID único del registro de la póliza`
+sort(unique(Vigor$NOM_PROD))
+V= Vigor
+#V = Vigor%>%filter(year(Vigor$F_EMI) == 2026 |year(Vigor$F_EMI) == 2025)
+#Pol = Soporte[Soporte$`No. Póliza` %in%  Val12$`ID único del registro de la póliza`[which(abs(Val12$diferencia)>1)]]
+B1 = Soporte_T%>%select("No. Póliza", "Suma asegurada")
+B1 = B1%>%unique()
+B = V%>%select("POL","SA","COB", "PROD", "F_EMI","MOV","ENDS")
+B = B%>%filter(ENDS =="A", MOV == 0)
+
+B = B%>%group_by(POL,MOV)%>%slice_max(F_EMI, n = 1, with_ties = FALSE) %>%ungroup()
+B = B%>%filter(PROD ==x)
+unique(B$COB)
+Val1 = B%>%left_join(B1, by = c("POL" ="No. Póliza"))
+Val12 = Val1#%>%unique()
+names(Val12)
+Val12 = Val12%>%group_by(`POL`)%>%summarise(max(`SA`), max(`Suma asegurada`),anio = year(F_EMI))
+Val12$diferencia = Val12$`max(SA)`-Val12$`max(\`Suma asegurada\`)`
+Polizas = Val12$POL#[abs(Val12$diferencia)<100]
+Polizas =  Polizas[!is.na(Polizas)]
+length(Polizas)
+O = Val12$diferencia
+O = O[is.na(O)]
+length(O)
+
+ruta <- "C:/Users/agarciadeleon/R_Studio/Scripts/Carp1/Validacion_PREG_80/Validaciones/Reporte_AC_Esc.xlsx"
+write.xlsx(Val12, ruta)
+################################
+#############################Revisión de prima
+########################Ramos Técnicos
+sort(names(Vigor))
+Soporte_T$`Suma asegurada` = as.numeric(Soporte_T$`Suma asegurada` )
+Vigor$`ID único del registro de la póliza`
+sort(unique(Vigor$NOM_PROD))
+V= Vigor
+###########################
+sort(names(Vigor))
+D1 = Soporte_T%>%select("No. Póliza", "Prima Neta")
+Soporte_T$`Prima Neta` = as.numeric(Soporte_T$`Prima Neta`)
+D1 = D1%>%unique()
+D1 = D1 %>%
+  group_by(`No. Póliza`) %>%
+  slice_max(`Prima Neta`, n = 1, with_ties = FALSE)
+D1 = D1%>%ungroup()
+K = Vigor%>%filter(MOV ==0 &  ENDS == "A")
+D = K%>%select("POL","PRT","SA","PROD","ENDS","MOV")
+names(D)
+####################
+Val2 = D%>%left_join(D1, by = c("POL"="No. Póliza"))
+Val22 = Val2#%>%unique()
+Val22 = Val22%>%group_by(`POL`)%>%summarise(max(`Prima Neta`), sum(`PRT`))
+Val22$diferenciaP = 0
+#Val22 = Val22 %>%left_join(Val12, by = c("POL"="POL"))
+#Val22$Prima = Val22$`sum(PRT)`+(Val22$`max(\`Suma asegurada\`)`*2/1000)
+Val22$diferenciaP = abs(Val22$`max(\`Prima Neta\`)` -Val22$`sum(PRT)`)
