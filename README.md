@@ -29,4 +29,3 @@ Autoría
 
 Todos los códigos incluidos en este repositorio fueron desarrollados por el área de Auditoría Interna como apoyo a los procedimientos de revisión, validación y análisis de información ejecutados durante los trabajos de auditoría.
 
-Envía tus comentarios en BizChat
